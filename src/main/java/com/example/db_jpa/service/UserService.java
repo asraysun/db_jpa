@@ -2,8 +2,8 @@ package com.example.db_jpa.service;
 
 import com.example.db_jpa.model.User;
 import com.example.db_jpa.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 @Service
 public class UserService {

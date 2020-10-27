@@ -8,11 +8,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 @Controller
 public class UserController {
 
+    static final String JDBC_DRIVER = "{url}";
+    static final String JDBC_DB_URL = "{db_url}";
+
+    static final String JDBC_USER = "{admin}";
+    static final String JDBC_PASS = "{password}";
     private final UserService userService;
 
     public UserController(UserService userService) {
@@ -31,6 +40,24 @@ public class UserController {
         return "user-create";
     }
 
+    @PostMapping("/user-auto-create")
+    public String createUser1() {
+        try {
+            Class.forName(JDBC_DRIVER);
+            Connection connObj = DriverManager.getConnection(JDBC_DB_URL, JDBC_USER, JDBC_PASS);
+            connObj.setAutoCommit(false);
+            Statement stmtObj = connObj.createStatement();
+            String correctQuery = "INSERT INTO users (first_name, last_name) VALUES ('autofirstname', 'autolastname'); ";
+            stmtObj.executeUpdate(correctQuery);
+
+            connObj.commit();
+
+
+        } catch (SQLException | ClassNotFoundException throwables) {
+            throwables.printStackTrace();
+        }
+        return "redirect:/users";
+    }
     @PostMapping("/user-create")
     public String createUser(User user) {
         userService.saveUser(user);
